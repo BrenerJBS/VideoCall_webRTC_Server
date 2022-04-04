@@ -27,21 +27,15 @@ io.on('connection', (socket) => {
     socket.on('register-new-user', (data) => {
         peers.push({
             username:data.username,
-            socketId: data.socketId,
-            classId: data.classId
+            socketId: data.socketId
         })
 
-        socket.join(data.classId);
+        socket.broadcast      
+        .emit("list-users", peers)
         
-        const peersClass = peers.filter((peer) => peer.classId === data.classId)
 
-        io.to(data.classId).emit("list-users", peersClass);
-        /*socket.broadcast
-        .to(data.classId)
-        .emit("list-users", peersClass)*/
-        
         console.log("register-new-user")
-        console.log(peersClass)
+        console.log(peers)
     })
 
     // listenners relacionado ao videocall
@@ -98,12 +92,9 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('User disconnect')
-        const userDisconnect = peers.find((peer) => peer.socketId === socket.id)          
-        peers = peers.filter((peer) => peer.socketId !== socket.id)        
-        if (userDisconnect){
-            const peersClass = peers.filter((peer) => peer.classId === userDisconnect.classId)
-            io.to(userDisconnect.classId).emit("list-users", peersClass);
-        }
+        console.log(socket.id)
+        peers = peers.filter((peer) => peer.socketId !== socket.id)
+        console.log(peers)
     })
 
 })
