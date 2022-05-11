@@ -17,14 +17,10 @@ app.get('/', (req, res) => {
 app.get('/api/get-turn-credentials', (req, res) => {
     const accountSid = process.env.ACCOUNTSID;
     const authToken = process.env.AUTHOKEN;
-    console.log(accountSid)
-    console.log(authToken)
+    //console.log(accountSid)
+    //console.log(authToken)
     const client = twilio(accountSid,authToken)
-
-    client.tokens.create().then((token) => res.send({token}))
-
-    
-
+    client.tokens.create().then((token) => res.send({token}))   
 })
 
 const server = app.listen(PORT, () => {
@@ -43,10 +39,15 @@ let peers = []
 
 io.on('connection', (socket) => {
     socket.emit('connection', null);
-    console.log("new user connected")
-    console.log(socket.id)
+    //console.log("new user connected")
+    //console.log(socket.id)
 
     socket.on('register-new-user', (data) => {
+        //console.log('register-new-user')
+        //console.log('peers.filter')
+        //console.log(peers.filter((peer) => peer.classId === data.classId))
+        //console.log('peers')
+        //console.log(peers)
         peers.push({
             username:data.username,
             socketId: data.socketId,
@@ -62,15 +63,15 @@ io.on('connection', (socket) => {
         .to(data.classId)
         .emit("list-users", peersClass)*/
         
-        console.log("register-new-user")
-        console.log(peersClass)
+        //console.log("register-new-user")
+        //console.log(peersClass)
     })
 
     // listenners relacionado ao videocall
     
 
     socket.on('pre-offer', (data) => {
-        console.log("pre-offer")
+        //console.log("pre-offer")
         io.to(data.callee.socketId).emit('pre-offer' , {
             callerUsername: data.caller.username,
             callerSocketId: socket.id
@@ -78,25 +79,25 @@ io.on('connection', (socket) => {
     })
 
     socket.on('pre-offer-answer', (data) => {
-        console.log("pre-offer-answer")       
-        console.log("-")
+        //console.log("pre-offer-answer")       
+        //console.log("-")
         io.to(data.callerSocketId).emit('pre-offer-answer' , {
             answer: data.answer,
         })
     })
 
     socket.on('webRTC-offer', (data) => {
-        console.log("webRTC-offer")              
-        console.log("-")
+        //console.log("webRTC-offer")              
+        //console.log("-")
         io.to(data.callerSocketId).emit('webRTC-offer' , {
             offer: data.offer,
         })
     })
 
     socket.on('webRTC-answer', (data) => {
-        console.log("webRTC-answer")
+        //console.log("webRTC-answer")
        
-        console.log("-")
+        //console.log("-")
         io.to(data.callerSocketId).emit('webRTC-answer' , {
             answer: data.answer,
         })
@@ -104,7 +105,7 @@ io.on('connection', (socket) => {
     
 
     socket.on('webRTC-candidate', (data) => {
-        console.log("webRTC-candidate")
+        //console.log("webRTC-candidate")
         //console.log(data)
         io.to(data.connectedUserSocketId).emit('webRTC-candidate' , {
             candidate: data.candidate,
@@ -112,14 +113,14 @@ io.on('connection', (socket) => {
     })
 
     socket.on('user-hanged-up', (data) => {
-        console.log("user-hanged-up")
+        //console.log("user-hanged-up")
        
-        console.log("-")
+        //console.log("-")
         io.to(data.connectedUserSocketId).emit('user-hanged-up')
     })
 
     socket.on('disconnect', () => {
-        console.log('User disconnect')
+        //console.log('User disconnect')
         const userDisconnect = peers.find((peer) => peer.socketId === socket.id)          
         peers = peers.filter((peer) => peer.socketId !== socket.id)        
         if (userDisconnect){
