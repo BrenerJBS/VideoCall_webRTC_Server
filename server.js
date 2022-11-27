@@ -39,15 +39,14 @@ let peers = []
 
 io.on('connection', (socket) => {
     socket.emit('connection', null);
-    //console.log("new user connected")
-    //console.log(socket.id)
+    console.log("new user connected")
+    console.log(socket.id)
 
     socket.on('register-new-user', (data) => {
-        //console.log('register-new-user')
-        //console.log('peers.filter')
-        //console.log(peers.filter((peer) => peer.classId === data.classId))
-        //console.log('peers')
-        //console.log(peers)
+        console.log('register-new-user')
+        console.log(socket.id)
+        console.log(data)
+
         peers.push({
             username:data.username,
             socketId: data.socketId,
@@ -120,7 +119,9 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        //console.log('User disconnect')
+        console.log('User disconnect')
+        console.log(peers)
+        console.log(socket.id)
         const userDisconnect = peers.find((peer) => peer.socketId === socket.id)          
         peers = peers.filter((peer) => peer.socketId !== socket.id)        
         if (userDisconnect){
